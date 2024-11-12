@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from './Header'
 import CheckValidData from './utils/CheckValidData'
+import { auth } from './utils/firebase'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
 
@@ -10,18 +13,61 @@ const Login = () => {
     const [password,setPassword]=useState()
     const [name,setName]=useState()
     const [showError,setShowError]=useState('')
+    const navigate = useNavigate();
 
-    const handleCheckValidating = () =>
-    {
+    const handleCheckValidating = () => {
+      const msg = CheckValidData(email, password, name);
+      setShowError(msg);
+    
+      if (msg) return;
+    
+      if (!isSignFrom) {
+        // Sign up logic
+        createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log("Successfully signed up:", user);
 
-     const msg =  CheckValidData(email,password,name)
+            localStorage.setItem("uid", user.uid);
+            localStorage.setItem("isLoggedIn", "true");
+            
+            navigate('/brower');
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setShowError(`Error during sign up: ${errorCode} - ${errorMessage}`);
+          });
+      } else {
+        // Sign in logic
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log("Successfully signed in:", user);
+            
+            localStorage.setItem("uid", user.uid);
+            localStorage.setItem("isLoggedIn", "true");
 
-     console.log(name)
-     console.log(email)
-     console.log(password)
-     setShowError(msg)
+            navigate('/brower');
+          })
+          .catch((error) => {
+   
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setShowError(`Error during sign in: ${errorCode} - ${errorMessage}`);
+          });
+      }
+    };
+    
 
-    }
+
+    useEffect(() => {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      const uid = localStorage.getItem('uid');
+      if (isLoggedIn) {
+        navigate('/brower');
+      }
+    }, [navigate]);
 
     const handelSignFrom = () =>{
         setIsSignFrom(!isSignFrom)
@@ -72,29 +118,29 @@ const Login = () => {
                 
                 <input type='text' placeholder='Email or mobile number' onChange={(e)=>setEmail(e.target.value)} className='p-4 bg-black border border-slate-400 rounded bg-opacity-65 text-white  w-full'/>
                 {email === '' && (
-        <div className="flex  space-x-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            role="img"
-            viewBox="0 0 16 16"
-            width="20"
-            height="16"
-            aria-hidden="true"
-            className="text-red-600 mt-1"
-          >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M14.5 8C14.5 11.5899 11.5899 14.5 8 14.5C4.41015 14.5 1.5 11.5899 1.5 8C1.5 4.41015 4.41015 1.5 8 1.5C11.5899 1.5 14.5 4.41015 14.5 8ZM16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8ZM4.46967 5.53033L6.93934 8L4.46967 10.4697L5.53033 11.5303L8 9.06066L10.4697 11.5303L11.5303 10.4697L9.06066 8L11.5303 5.53033L10.4697 4.46967L8 6.93934L5.53033 4.46967L4.46967 5.53033Z"
-              fill="currentColor"
-            />
-          </svg>
-          <p className="text-red-600 text-sm">
-            Please enter a valid email address or phone number.
-          </p>
-        </div>
-      )}
+                  <div className="flex  space-x-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      role="img"
+                      viewBox="0 0 16 16"
+                      width="20"
+                      height="16"
+                      aria-hidden="true"
+                      className="text-red-600 mt-1"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M14.5 8C14.5 11.5899 11.5899 14.5 8 14.5C4.41015 14.5 1.5 11.5899 1.5 8C1.5 4.41015 4.41015 1.5 8 1.5C11.5899 1.5 14.5 4.41015 14.5 8ZM16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8ZM4.46967 5.53033L6.93934 8L4.46967 10.4697L5.53033 11.5303L8 9.06066L10.4697 11.5303L11.5303 10.4697L9.06066 8L11.5303 5.53033L10.4697 4.46967L8 6.93934L5.53033 4.46967L4.46967 5.53033Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <p className="text-red-600 text-sm">
+                      Please enter a valid email address or phone number.
+                    </p>
+                  </div>
+                )}
                 <input type='password' placeholder='Password'  onChange={(e)=>setPassword(e.target.value)}  className='p-4 w-full bg-black border text-white border-slate-400 rounded bg-opacity-65'/>
                 {password  === '' && 
                 (
@@ -131,7 +177,7 @@ const Login = () => {
                 )}
                 <p className='text-white text-start text-base cursor-pointer' onClick={handelSignFrom} >New to Netflix? Sign up now.</p>
 
-                 <span className='text-slate-400 text-start text-sm '>This page is protected by Google reCAPTCHA to ensure you're not a bot. Learn more.</span>
+                 <span  className='text-slate-400 text-start text-sm '>This page is protected by Google reCAPTCHA to ensure you're not a bot. Learn more.</span>
             </form>
  
     </div>
