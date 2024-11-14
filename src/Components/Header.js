@@ -8,6 +8,9 @@ const Header = () => {
   const navigate = useNavigate()
 
   const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const profileUrl = localStorage.getItem('photoURL')
+
+console.log(profileUrl)
 
   const handleSignOut = () => {
     localStorage.removeItem('uid');
@@ -33,12 +36,18 @@ const Header = () => {
           alt="Netflix Logo"
         />
         {isLoggedIn && (
-        <button
-        className="z-30 my-2 text-white font-bold p-2 bg-red-500 rounded hover:bg-red-600 transition-colors"
-        onClick={handleSignOut}
-      >
+          <div className='flex gap-2 items-center'>
+          <img src={profileUrl}
+          alt='profile_image'
+          className='w-10 h-10 rounded-full'>
+          </img>
+          <button
+         className="z-30 my-2 text-white font-bold p-2 bg-red-500 rounded hover:bg-red-600 transition-colors"
+         onClick={handleSignOut}
+         >
         Sign Out
-      </button>
+        </button>
+          </div>
         )}
 
       </div>

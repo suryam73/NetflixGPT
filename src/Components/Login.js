@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Header from './Header'
 import CheckValidData from './utils/CheckValidData'
 import { auth } from './utils/firebase'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
@@ -23,22 +23,33 @@ const Login = () => {
     
       if (!isSignFrom) {
         // Sign up logic
-        createUserWithEmailAndPassword(auth, email, password)
+        createUserWithEmailAndPassword(auth, email, password,name)
           .then((userCredential) => {
             const user = userCredential.user;
+            const displayName = name;
+            const  photoURL = "https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://fdczvxmwwjwpwbeeqcth.supabase.co/storage/v1/object/public/images/50dab922-5d48-4c6b-8725-7fd0755d9334/3a3f2d35-8167-4708-9ef0-bdaa980989f9.png"
             console.log("Successfully signed up:", user);
+            updateProfile(user, {
+              displayName: displayName,
+              photoURL:photoURL
+            }).then(() => {
+              console.log("User profile updated with name:", displayName);
+              localStorage.setItem("displayName",displayName)
+              localStorage.setItem("photoURL",photoURL)
+              localStorage.setItem("uid", user.uid);
+              localStorage.setItem("isLoggedIn", "true");
 
-            localStorage.setItem("uid", user.uid);
-            localStorage.setItem("isLoggedIn", "true");
-            
-            navigate('/brower');
+              navigate('/brower');
+            })
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             setShowError(`Error during sign up: ${errorCode} - ${errorMessage}`);
           });
-      } else {
+      } 
+      else 
+      {
         // Sign in logic
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
