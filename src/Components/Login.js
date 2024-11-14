@@ -95,7 +95,7 @@ const Login = () => {
 
 
     <div className="flex items-center justify-center min-h-screen">
-    <form onClick={(e) => e.preventDefault()} className="relative w-full p-14 bg-black items-center bg-opacity-80 rounded-lg sm:w-3/4 lg:w-[22%]">
+    <form onClick={(e) => e.preventDefault()} className="relative w-full mt-44 p-14 bg-black items-center bg-opacity-80 rounded-lg sm:w-3/4 lg:w-[22%]">
         <h1 className="text-white text-2xl md:text-4xl font-bold mb-6">
             {isSignFrom ? "Sign In" : "Sign Up"}
         </h1>
