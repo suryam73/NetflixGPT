@@ -95,7 +95,7 @@ const Login = () => {
 
 
     <div className="flex items-center justify-center min-h-screen">
-    <form onClick={(e) => e.preventDefault()} className="relative w-full p-14 bg-black items-center bg-opacity-80 rounded-lg sm:w-3/4 lg:w-1/3">
+    <form onClick={(e) => e.preventDefault()} className="relative w-full p-14 bg-black items-center bg-opacity-80 rounded-lg sm:w-3/4 lg:w-[22%]">
         <h1 className="text-white text-2xl md:text-4xl font-bold mb-6">
             {isSignFrom ? "Sign In" : "Sign Up"}
         </h1>
@@ -129,11 +129,11 @@ const Login = () => {
             <span className="text-white text-center mt-3 block">Forgot password?</span>
         )}
         
-        <p className="text-white text-center text-base cursor-pointer mt-4" onClick={handelSignFrom}>
+        <p className="text-white text-start text-base cursor-pointer mt-4" onClick={handelSignFrom}>
             {isSignFrom ? "New to Netflix? Sign up now." : "Already have an account? Sign in"}
         </p>
 
-        <span className="text-slate-400 text-center text-sm mt-4 block">
+        <span className="text-slate-400 text-start text-sm mt-4 block">
             This page is protected by Google reCAPTCHA to ensure you're not a bot. Learn more.
         </span>
     </form>
